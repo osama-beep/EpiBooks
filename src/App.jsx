@@ -1,17 +1,20 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import MyNav from "./components/MyNav";
 import MyFooter from "./components/MyFooter";
-import Welcome from "./components/Welcome";
-import AllTheBooks from "./components/AllTheBooks";
+import BookList from './components/BookList';
+import { Container } from 'react-bootstrap';
 
-const App = () => {
+function App() {
   return (
-    <div>
+    <div className="App">
       <MyNav />
-      <Welcome />
-      <AllTheBooks />
+      <Container>
+        <h1 className="my-4">EpiBooks</h1>
+        <BookList />
+      </Container>
       <MyFooter />
     </div>
   );
-};
+}
 
 export default App;
