@@ -1,49 +1,58 @@
-import React, { useState } from 'react';
-import { Row, Col, Container, Form } from 'react-bootstrap';
-import SingleBook from './SingleBook';
-import fantasy from "../data/fantasy.json";
-import horror from "../data/horror.json";
-import history from "../data/history.json";
-import romance from "../data/romance.json";
-import scifi from "../data/scifi.json";
+import { Component } from "react";
+import SingleBook from "./SingleBook";
+import CommentArea from "./CommentArea";
+import { Col, Form, Row, Container } from "react-bootstrap";
 
-const allBooks = [
-  ...fantasy.map((book) => ({ ...book, genre: "Fantasy" })),
-  ...horror.map((book) => ({ ...book, genre: "Horror" })),
-  ...history.map((book) => ({ ...book, genre: "History" })),
-  ...romance.map((book) => ({ ...book, genre: "Romance" })),
-  ...scifi.map((book) => ({ ...book, genre: "Sci-Fi" })),
-];
+class BookList extends Component {
+  state = {
+    searchQuery: "",
+    selectedBook: null,
+  };
 
-const BookList = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredBooks = allBooks.filter(book =>
-    book.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <Container className="my-4">
-      <Row className="my-3">
-        <Col>
-          <Form.Control
-            type="text"
-            placeholder="Search books..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Col>
-      </Row>
-      <Row>
-        {filteredBooks.map((book) => (
-          <Col key={`${book.genre}-${book.asin}`} xs={12} sm={6} md={4} lg={3}>
-            <SingleBook book={book} />
+  handleBookSelect = (asin) => {
+    this.setState({ selectedBook: asin });
+  };
+  render() {
+    return (
+      <Container fluid>
+        <Row className="justify-content-center mt-5">
+          <Col xs={12} md={4} className="text-center">
+            <Form.Group>
+              <Form.Control
+                type="search"
+                placeholder="Cerca un libro"
+                value={this.state.searchQuery}
+                onChange={(e) => this.setState({ searchQuery: e.target.value })}
+              />
+            </Form.Group>
           </Col>
-        ))}
-      </Row>
-    </Container>
-  );
-};
+        </Row>
+        <Row>
+          <Col xs={12} md={8}>
+            <Row className="g-2 mt-3">
+              {this.props.books
+                .filter((b) =>
+                  b.title.toLowerCase().includes(this.state.searchQuery.toLowerCase())
+                )
+                .map((b) => (
+                  <Col xs={12} md={4} key={b.asin}>
+                    <SingleBook 
+                      book={b} 
+                      selected={this.state.selectedBook === b.asin}
+                      onSelect={this.handleBookSelect}
+                    />
+                  </Col>
+                ))}
+            </Row>
+          </Col>
+          <Col xs={12} md={4}>
+            <CommentArea asin={this.state.selectedBook} />
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+}
 
 export default BookList;
 
